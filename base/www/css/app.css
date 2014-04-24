@@ -1,0 +1,26 @@
+.item_credit >*    {   background-color: #eeffee !important; }
+.active.item_credit >* {  background-color: #77ee77 !important; }
+.label_credit   { color: red !important; }
+
+.item_debit     {}
+
+.bar_unbalanced >* {  background-color: #880000 !important; }
+.bar_unbalanced {  background-color: #880000 !important; }
+
+.participants-list { display: inline-block; border: none; margin: 10px;}
+.badge-participant { display: inline-block !important; position: static !important; float: right; color: white; }
+
+.color_1 { background-color: red }
+.color_2 { background-color: blue }
+.color_3 { background-color: green }
+.color_4 { background-color: purple }
+.color_5 { background-color: orange }
+.color_6 { background-color: black }
+
+.standings { margin: 5px auto; }
+.standings td { text-align: right; padding: 4px 1em; }
+.standings th { text-align: right; padding: 4px 1em; font-weight: bold }
+
+.p_relative { position: relative; overflow: visible !important }
+.badge_relative { top: 0px !important; right: 0px !important }
+
