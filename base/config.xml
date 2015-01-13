@@ -5,7 +5,7 @@
         An app to reconcile debts between friends.
         Created with the Ionic Framework and Apache Cordova.
     </description>
-    <author email="djl@colourcountry.net" href="http://colourcountry.com/">
+    <author email="djl@colourcountry.net" href="http://colourcountry.net/">
       Colourcountry
     </author>
     <content src="index.html" />

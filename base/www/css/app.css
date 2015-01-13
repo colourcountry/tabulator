@@ -24,3 +24,4 @@
 .p_relative { position: relative; overflow: visible !important }
 .badge_relative { top: 0px !important; right: 0px !important }
 
+pre { margin: 1em; font-size: 8pt; overflow-x: scroll; white-space: pre; }

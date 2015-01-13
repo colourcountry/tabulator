@@ -1,4 +1,4 @@
-angular.module('tabulator', ['ionic'])
+angular.module('tabulator', ['ionic', 'ngCordova'])
 
 /**
  * The Bills factory handles saving and loading bills
@@ -37,7 +37,7 @@ angular.module('tabulator', ['ionic'])
   }
 })
 
-.controller('TabulatorCtrl', function($scope, $timeout, $ionicModal, $ionicPopup, $ionicSideMenuDelegate, Bills) {
+.controller('TabulatorCtrl', function($scope, $timeout, $ionicModal, $ionicPopup, $ionicSideMenuDelegate, $cordovaSocialSharing, Bills) {
 
     // A utility function for creating a new bill
     // with the given title
@@ -138,6 +138,14 @@ angular.module('tabulator', ['ionic'])
     // Create and load the Modal for standings
     $ionicModal.fromTemplateUrl('standings.html', function(modal) {
         $scope.standings_modal = modal;
+    }, {
+        scope: $scope,
+        animation: 'slide-in-up'
+    });
+
+    // Create and load the Modal for archive
+    $ionicModal.fromTemplateUrl('archive.html', function(modal) {
+        $scope.archive_modal = modal;
     }, {
         scope: $scope,
         animation: 'slide-in-up'
@@ -361,8 +369,22 @@ angular.module('tabulator', ['ionic'])
         $scope.standings_modal.show();
     };
 
+    $scope.open_archive = function() {
+        $scope.archive_modal.show();
+    };
+
     $scope.close_standings = function() {
         $scope.standings_modal.hide();
+    };
+
+    $scope.close_archive = function() {
+        $scope.archive_modal.hide();
+    };
+
+    $scope.share_archive = function() {
+        var node = document.getElementById("archive_data");
+        var content = node.innerText || node.textContent;
+        $cordovaSocialSharing.share(content);
     };
 
     $scope.toggle_bills = function() {
