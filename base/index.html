@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Tabulator Colonel v0.9</title>
+        <title>Tabulator Colonel v0.9.1</title>
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 
         <link href="lib/ionic/css/ionic.css" rel="stylesheet">
@@ -115,19 +115,20 @@
             <div class="modal">
 
                 <!-- Modal header bar -->
-                <ion-header-bar class="bar-secondary">
+                <ion-header-bar class="bar-dark">
                     <h1 class="title">Add item</h1>
                     <button class="button button-icon ion-close" ng-click="close_add_item()"></button>
                 </ion-header-bar>
 
+                <form name="item_details" ng-submit="create_item(item)"
+                      ng-init="item.title=item_title;
+                               item.value=item_value;
+                               item.is_each=item_is_each;
+                               item.is_credit=item_is_credit">
+
                 <!-- Modal content area -->
                 <ion-content>
 
-                    <form name="item_details" ng-submit="create_item(item)"
-                          ng-init="item.title=item_title;
-                                   item.value=item_value;
-                                   item.is_each=item_is_each;
-                                   item.is_credit=item_is_credit">
                         <div class="list">
                             <label class="item item-input">
                                 <input type="text" placeholder="(Optional) Name" ng-model="item.title">
@@ -153,13 +154,16 @@
                                 Apply full amount to each participant
                             </label>
                         </div>
-                        <div class="padding">
-                            <button type="submit" class="button button-icon ion-plus-circled"></button>
-                        </div>
-                    </form>
 
                 </ion-content>
 
+                <!-- Modal footer bar -->
+                <ion-footer-bar class="bar-stable">
+                    <button type="submit" class="button button-icon"></button>
+                    <button type="submit" class="button button-icon ion-plus-circled"></button>
+                </ion-footer-bar>
+
+                </form>
             </div>
         </script>
 
@@ -227,8 +231,7 @@
                         </div>
                 </ion-content>
                 <ion-footer-bar class="bar-stable">
-                    <small>Tabulator Colonel v0.9 by <a href="http://colourcountry.com/">colourcountry</a>
-                    ( <a href="http://colourcountry.com/2014/tabulator">get online help</a> )
+                    <small><a href="http://github.com/colourcountry/tabulator">Tabulator</a> Colonel v0.9.1 by <a href="http://colourcountry.net/">colourcountry</a>
                     </small>
                 </ion-footer-bar>
 
@@ -253,7 +256,7 @@
 >Bill,Item,Credit ?,Multiplier,Currency,Amount,Currency,<span ng-repeat="(participant,index) in participants">,{{participant}}</span>
 <span ng-repeat="bill in bills"
 ><span ng-repeat="item in bill.items"
->{{bill.title}},{{item.title}},{{item.is_credit ? "cr" : ""}},{{item.multiplier}},{{item.currency_before}},{{item.value}},{{item.currency_after}}<span ng-repeat="(participant,index) in participants">,{{(item.participants.indexOf(participant)>-1) ? participant : ""}}</span>
+>{{bill.title}},{{item.title}},{{item.is_credit ? "cr" : ""}},{{item.currency_before}},{{item.value * item.multiplier}},{{item.currency_after}}<span ng-repeat="(participant,index) in participants">,{{(item.participants.indexOf(participant)>-1) ? participant : ""}}</span>
 </span>
 </span>
                         </pre>
