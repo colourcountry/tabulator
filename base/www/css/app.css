@@ -8,14 +8,18 @@
 .bar_unbalanced {  background-color: #880000 !important; }
 
 .participants-list { display: inline-block; border: none; margin: 10px;}
-.badge-participant { display: inline-block !important; position: static !important; float: right; color: white; }
+.badge-participant { display: inline-block !important; background-color: #eee; }
+.badge-in-item { position:static !important; float: right; }
+.badge-in-menu { position:static !important; float: none; }
 
-.color_1 { background-color: red }
-.color_2 { background-color: blue }
-.color_3 { background-color: green }
-.color_4 { background-color: purple }
-.color_5 { background-color: orange }
-.color_6 { background-color: black }
+.color_1 { background-color: red; color: white; }
+.color_2 { background-color: blue; color: white; }
+.color_3 { background-color: green; color: white; }
+.color_4 { background-color: purple; color: white; }
+.color_5 { background-color: orange; color: white; }
+.color_6 { background-color: black; color: white; }
+
+.not_selected { opacity: 0.5 }
 
 .standings { margin: 5px auto; }
 .standings td { text-align: right; padding: 4px 1em; }
@@ -25,3 +29,8 @@
 .badge_relative { top: 0px !important; right: 0px !important }
 
 pre { margin: 1em; font-size: 8pt; overflow-x: scroll; white-space: pre; }
+
+.checkbox { height: 48px; }
+
+input { padding: 0.5em; }
+.ng-invalid { background-color: #ffeedd; }

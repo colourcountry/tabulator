@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="net.colourcountry.tabulator" version="0.9.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Tabulator Colonel</name>
+<widget id="net.colourcountry.tabulator" version="1.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Tabulator</name>
     <description>
         An app to reconcile debts between friends.
         Created with the Ionic Framework and Apache Cordova.
     </description>
-    <author email="djl@colourcountry.net" href="http://colourcountry.net/">
+    <author email="djl@colourcountry.net" href="http://colourcountry.com/2014/tabulator">
       Colourcountry
     </author>
     <content src="index.html" />

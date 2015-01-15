@@ -37,7 +37,22 @@ angular.module('tabulator', ['ionic', 'ngCordova'])
   }
 })
 
-.controller('TabulatorCtrl', function($scope, $timeout, $ionicModal, $ionicPopup, $ionicSideMenuDelegate, $cordovaSocialSharing, Bills) {
+.factory('Participants', function() {
+  return {
+    all: function() {
+      var participant_string = window.localStorage['participants'];
+      if(participant_string) {
+        return angular.fromJson(participant_string);
+      }
+      return ["Me","You"];
+    },
+    save: function(participants) {
+      window.localStorage['participants'] = angular.toJson(participants);
+    }
+  }
+})
+
+.controller('TabulatorCtrl', function($scope, $timeout, $ionicModal, $ionicPopup, $ionicSideMenuDelegate, $cordovaSocialSharing, Bills, Participants) {
 
     // A utility function for creating a new bill
     // with the given title
@@ -49,9 +64,12 @@ angular.module('tabulator', ['ionic', 'ngCordova'])
         $scope.open_add_item();
     }
 
-    // Load participants (FIXME: hard coded for now)
-    $scope.participants = {"CM":1,"DL":2,"DT":3,"MT":4,"RW":5,"SA":6};
+    // Load participants
+    $scope.participants = Participants.all();
     $scope.active_participants = [];
+
+    // Settings data
+    $scope.new_participant_name = "";
 
     // Hold on to form data
     $scope.item_is_credit = false;
@@ -141,6 +159,14 @@ angular.module('tabulator', ['ionic', 'ngCordova'])
     }, {
         scope: $scope,
         animation: 'slide-in-up'
+    });
+
+    // Create and load the Modal for settings
+    $ionicModal.fromTemplateUrl('settings.html', function(modal) {
+        $scope.settings_modal = modal;
+    }, {
+        scope: $scope,
+        animation: 'slide-in-down'
     });
 
     // Create and load the Modal for archive
@@ -246,7 +272,7 @@ angular.module('tabulator', ['ionic', 'ngCordova'])
 
             console.log(value+" ("+currency+") split between "+pp.length+" = "+share+" each plus "+shaft);
             for (var j=0; j<pp.length; j++) {
-                participant = pp[j];
+                var participant = pp[j];
                 if (!balances[participant]) {
                     balances[participant] = {};
                 }
@@ -296,11 +322,11 @@ angular.module('tabulator', ['ionic', 'ngCordova'])
         var new_total_balances = {};
 
         for (var i=0; i<$scope.bills.length; i++) {
-            for (participant in $scope.bills[i].balances) {
+            for (var participant in $scope.bills[i].balances) {
                 if (!new_total_balances[participant]) {
                     new_total_balances[participant] = {};
                 }
-                for (currency in $scope.bills[i].balances[participant]) {
+                for (var currency in $scope.bills[i].balances[participant]) {
                     var value = $scope.bills[i].balances[participant][currency];
                     if (!new_total_per_currency[currency]) {
                         new_total_per_currency[currency] = {
@@ -369,12 +395,20 @@ angular.module('tabulator', ['ionic', 'ngCordova'])
         $scope.standings_modal.show();
     };
 
+    $scope.open_settings = function() {
+        $scope.settings_modal.show();
+    };
+
     $scope.open_archive = function() {
         $scope.archive_modal.show();
     };
 
     $scope.close_standings = function() {
         $scope.standings_modal.hide();
+    };
+
+    $scope.close_settings = function() {
+        $scope.settings_modal.hide();
     };
 
     $scope.close_archive = function() {
@@ -420,6 +454,77 @@ angular.module('tabulator', ['ionic', 'ngCordova'])
         return $scope.active_participants.indexOf(name) > -1;
     }
 
+    $scope.add_participant = function(name) {
+        if (name) {
+            $scope.participants.push(name);
+            $scope.participants.sort();
+            Participants.save($scope.participants);
+        }
+    }
+
+    $scope.get_colour = function(name) {
+        var firstChar = name.charCodeAt(0);
+        /* don't colour glyphs which are already colourful */
+        if (    ((firstChar & 0x8000) == 0x8000) /* first char of a surrogate for an astral character (emoji are up here) */
+             || ((firstChar & 0xff00) == 0x2600) /* star signs (which on android have a lovely* purple backdrop) *not lovely */
+           ) {
+            return -1;
+        }
+        var colour = 0;
+        for (var i=0; i<name.length; i++) {
+            colour += name.charCodeAt(i);
+        }
+        return colour%6;
+    }
+
+    $scope.reset_participants = function(new_participants) {
+        if (new_participants.length > 1) {
+            $ionicPopup.confirm({
+                title: 'Replace all participants?',
+            }).then(function(res) {
+                if (res) {
+                    $scope.participants = new_participants;
+                    $scope.active_participants = [];
+                    Participants.save($scope.participants);
+                }
+            });
+        }
+    }
+
+    $scope.delete_participant = function(name) {
+        if (name) {
+            $ionicPopup.confirm({
+                title: 'Remove '+name+'?',
+            }).then(function(res) {
+                if (res) {
+                    if ($scope.active_participants.indexOf(name) > -1) {
+                        $scope.active_participants.splice($scope.active_participants.indexOf(name),1);
+                    }
+                    if ($scope.participants.indexOf(name) > -1) {
+                        $scope.participants.splice($scope.participants.indexOf(name),1);
+                    }
+                    if ($scope.participants == []) {
+                        $scope.participants = ["Me","You"];
+                    }
+                    Participants.save($scope.participants);
+                }
+            });
+        }
+    }
+
+    $scope.delete_all_data = function(name) {
+            $ionicPopup.confirm({
+                title: 'Delete all bills?',
+            }).then(function(res) {
+                if (res) {
+                    window.localStorage['bills'] = '';
+                    $scope.bills = [];
+                    $scope.active_bill = null;
+                    $scope.recalculate_total();
+                }
+            });
+    }
+
     // Try to create the first bill, make sure to defer
     // this by using $timeout so everything is initialized
     // properly
@@ -432,7 +537,7 @@ angular.module('tabulator', ['ionic', 'ngCordova'])
                 subTitle: 'Enter a name for the first bill',
                 okText: 'Create',
                 inputType: 'text',
-                inputPlaceholder: 'Food'
+                inputPlaceholder: ''
             }).then(function(res) {
                 if(res) {
                     create_bill(res);
